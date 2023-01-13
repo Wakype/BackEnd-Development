@@ -1,17 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs-extra')
+const multer = require('multer');
 
-const routers = require('./routers');
-const log = require('./middleware/log');
-const notFound = require('./middleware/404');
-const errorHandling = require('./middleware/errorHandling');
+const routers = require('./src/routes/routers');
+const log = require('./src/middleware/log');
+const notFound = require('./src/middleware/404');
+const errorHandling = require('./src/middleware/errorHandling');
 
 const app = express();
 const port = 8080;
 
+app.use(bodyParser.json());
 app.use(log);
 app.use(routers);
-app.use(bodyParser.json());
 app.use(errorHandling);
 app.use(notFound);
 
