@@ -4,10 +4,19 @@ const fs = require('fs');
 const authMiddleware = require('../middleware/auth');
 
 const routers = express.Router();
-// const fs = require('fs-extra');
 const multer = require('multer');
 
-const upload = multer({ dest: 'public' });
+// const imageFilter = (req, file, cb) => {
+//   if (!file.originalname.match(/\.(jpg/jpeg/png/gif)$/)) {
+//     return cb(null, false)
+//   }
+//   cb(null, true)
+// }
+const upload = multer({
+  dest: 'public',
+  //  fileFilter: imageFilter
+});
+const multipleUpload = multer({ dest: 'public' });
 
 // =========================== GET ========================= //
 routers.get('/', authMiddleware, (req, res) => {
@@ -73,9 +82,13 @@ routers.post('/upload', upload.single('file'), (req, res) => {
   if (file) {
     const target = path.join(__dirname, 'public', file.originalname);
     fs.renameSync(file.path, target);
+    url = `${req.protocol}://${req.get('host')}/${file.originalname}`;
+    console.log('url =>', url);
+
     res.send({
       status: 200,
       message: 'Success, File uploaded',
+      url: url,
     });
   } else {
     res.send({
@@ -84,5 +97,24 @@ routers.post('/upload', upload.single('file'), (req, res) => {
     });
   }
 });
+routers.post(
+  '/multipleUpload',
+  multipleUpload.array('file', 10),
+  (req, res) => {
+    const files = req.file;
+
+    files.map((file) => {
+      if (file) {
+        const target = path.join(__dirname, 'public', file.originalname);
+        fs.renameSync(file.path, target);
+      }
+    });
+
+    res.send({
+      status: 200,
+      message: 'Success, File uploaded',
+    });
+  }
+);
 
 module.exports = routers;
