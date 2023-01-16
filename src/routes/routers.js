@@ -31,6 +31,20 @@ routers.get('/user', (req, res) => {
     },
   });
 });
+routers.get('/absensi/:nama', (req, res) => {
+  let { status, dariTanggal, sampaiTanggal } = req.query;
+  let { nama } = req.params;
+  res.send({
+    status: 200,
+    message: 'Success',
+    data: {
+      nama: nama,
+      status: status,
+      dari_tanggal: dariTanggal,
+      sampai_tanggal: sampaiTanggal,
+    },
+  });
+});
 routers.get('/siswa/:nama', (req, res) => {
   // let nama = req.params.nama;
   let { nama } = req.params;
