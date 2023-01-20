@@ -1,6 +1,6 @@
 const notFound = (req, res, next) => {
   res.status(404).json({
-    status: 'error',
+    status: 'error 404',
     message: 'Not Found',
   });
 };

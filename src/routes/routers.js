@@ -2,9 +2,12 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const authMiddleware = require('../middleware/auth');
+const singleFileUpload = require('../storage/singleFileUpload');
+const multiFileUpload = require('../storage/multiFileUpload');
 
 const routers = express.Router();
 const multer = require('multer');
+// const multiUpload = require('../storage/multiFileUpload');
 
 // const imageFilter = (req, file, cb) => {
 //   if (!file.originalname.match(/\.(jpg/jpeg/png/gif)$/)) {
@@ -19,7 +22,7 @@ const upload = multer({
 const multipleUpload = multer({ dest: 'public' });
 
 // =========================== GET ========================= //
-routers.get('/', authMiddleware, (req, res) => {
+routers.get('/', (req, res) => {
   res.send('Hello world');
 });
 routers.get('/user', (req, res) => {
@@ -31,6 +34,9 @@ routers.get('/user', (req, res) => {
     },
   });
 });
+
+// routers.use(authMiddleware);
+
 routers.get('/absensi/:nama', (req, res) => {
   let { status, dariTanggal, sampaiTanggal } = req.query;
   let { nama } = req.params;
@@ -89,7 +95,47 @@ routers.post('/user', (req, res) => {
     },
   });
 });
+routers.post('/user/create', (req, res) => {
+  const payload = req.body;
+  const { kelas, nama } = req.body;
+  // const {payload} = req.query
 
+  res.json({
+    status: 200,
+    message: 'Success',
+    data: { kelas, nama },
+  });
+});
+routers.post('/upload/single', singleFileUpload, (req, res) => {
+  const file = req.file;
+  const url = `${req.protocol}://${req.get('host')}/${req.file.filename}`;
+
+  res.send({
+    status: 200,
+    message: 'Upload Success',
+    data: {
+      file: req.file,
+      fileURL: url
+    },
+  });
+});
+routers.post('/upload/multi', multiFileUpload, (req, res) => {
+  const files = req.files;
+  const url = files.map((file, index) =>{
+    return `${req.protocol}://${req.get('host')}/${req.files[index].filename}`;
+  })
+
+  res.send({
+    status: 200,
+    message: 'Upload Success',
+    data: {
+      file: req.files,
+      fileURL: [
+        url
+      ]
+    },
+  });
+});
 routers.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
 

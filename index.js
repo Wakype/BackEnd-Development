@@ -7,13 +7,19 @@ const routers = require('./src/routes/routers');
 const log = require('./src/middleware/log');
 const notFound = require('./src/middleware/404');
 const errorHandling = require('./src/middleware/errorHandling');
+const auth = require('./src/middleware/auth');
+
 
 const app = express();
-const port = 8080;
+const port = 8081;
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(express.json())
 app.use(log);
+app.use(express.static('./src/storage/uploads'))
+// app.use(auth);
 app.use(routers);
+app.use(notFound);
 app.use(errorHandling);
 app.use(notFound);
 
@@ -22,5 +28,5 @@ app.use(notFound);
 // );
 
 app.listen(port, function () {
-  return console.log(`Server berjalan di http://localhost:${port}`);
+  return console.log(`🖥️  ➤➤➤ Server berjalan di http://localhost:${port}`);
 });
