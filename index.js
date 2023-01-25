@@ -34,6 +34,6 @@ app.listen(port, async () => {
     console.log('🚧 ➤➤➤ Connection has been established successfully.');
     console.log(`🖥️  ➤➤➤ Server berjalan di http://localhost:${port}`);
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error('🚫 ➤➤➤ Unable to connect to the database:', error);
   }
 });
