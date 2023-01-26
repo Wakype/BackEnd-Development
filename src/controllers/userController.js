@@ -1,3 +1,7 @@
+const bcrypt = require('bcrypt');
+
+const artikel = require('../models/artikel');
+
 const UserModel = require('../models').user;
 
 async function getListUser(req, res) {
@@ -159,6 +163,48 @@ async function deleteUser(req, res) {
   }
 }
 
+async function updatePassowordUser(req, res) {
+  try {
+    const users = await UserModel.findAll();
+    const payload = req.body;
+    let { email, oldPassword, newPassword } = payload;
+    const verify = await bcrypt.compareSync(oldPassword, users.password);
+
+    if (email !== users?.email) {
+      return res.status(404).json({
+        status: 404,
+        msg: 'email not found',
+      });
+    }
+    if (email === req.email) {
+      if (verify) {
+        await UserModel.update(
+          { password: newPassword },
+          {
+            where: {
+              id: users.id,
+            },
+          }
+        );
+        res.json({
+          status: '200 OK',
+          msg: 'password updated',
+        });
+      }
+    } else {
+      res.json({
+        status: 'err',
+        msg: 'unauthorized',
+      });
+    }
+  } catch (err) {
+    res.status(403).json({
+      status: 'failed',
+      msg: 'ada kesalahan update password',
+    });
+  }
+}
+
 module.exports = {
   getListUser,
   createUser,
@@ -166,4 +212,5 @@ module.exports = {
   getDetailUserByParams,
   updateUser,
   deleteUser,
+  updatePassowordUser,
 };

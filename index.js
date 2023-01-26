@@ -37,3 +37,6 @@ app.listen(port, async () => {
     console.error('🚫 ➤➤➤ Unable to connect to the database:', error);
   }
 });
+
+
+// npx sequelize model:create --name produk  --attributes namaProduk:string,deskripsiProduk:string,hargaProduk:int,stokProduk:int,ratingProduk:string       
