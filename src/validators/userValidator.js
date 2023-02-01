@@ -24,4 +24,12 @@ const updateUserValidator = [
   check('nama').isLength({ min: 3 }).withMessage('Nama minimal 3 huruf'),
 ];
 
-module.exports = { createUserValidator, updateUserValidator };
+const updatePasswordValidator = [
+  check('email').isEmail().withMessage('Gunakan format email "@"'),
+
+  check('newPassword')
+    .isLength({ min: 8 })
+    .withMessage('password minimal 8 huruf'),
+];
+
+module.exports = { createUserValidator, updateUserValidator, updatePasswordValidator };

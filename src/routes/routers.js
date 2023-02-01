@@ -20,7 +20,12 @@ const validationResultMiddleware = require('../middleware/validationResult');
 const userValidator = require('../validators/userValidator');
 const { createUserValidator } = require('../validators/userValidator');
 const { createProdukValidator } = require('../validators/produkValidator');
-const { registerAuth, loginAuth } = require('../controllers/authController');
+const {
+  registerAuth,
+  loginAuth,
+  lupaPassword,
+  resetPassword,
+} = require('../controllers/authController');
 const {
   jwtValidateMiddleware,
 } = require('../middleware/jwtValidateMiddleware');
@@ -38,6 +43,8 @@ const routers = express.Router();
 // === Users === //
 routers.post('/register', registerAuth);
 routers.post('/login', loginAuth);
+routers.post('/lupa-password', lupaPassword);
+routers.post('/reset-password/:userId/:token', resetPassword);
 
 routers.use(jwtValidateMiddleware);
 
@@ -84,16 +91,21 @@ routers.put(
   validationResultMiddleware,
   updateUser
 );
-routers.put('/user/updatePassword', updatePassowordUser)
+routers.put(
+  '/user/updatePassword',
+  userValidator.updatePasswordValidator,
+  validationResultMiddleware,
+  updatePassowordUser
+);
 
 // === artikel === //
-routers.put('/artikel/update/:id', updateArtikel)
+routers.put('/artikel/update/:id', updateArtikel);
 
 // ========================= DELETE ======================== //
 // === Users === //
 routers.delete('/user/delete/:id', deleteUser);
 
 // === artikel === //
-routers.delete('/artikel/delete/:id', deleteArtikel)
+routers.delete('/artikel/delete/:id', deleteArtikel);
 
 module.exports = routers;
