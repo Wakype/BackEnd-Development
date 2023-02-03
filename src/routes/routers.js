@@ -37,6 +37,7 @@ const {
   deleteArtikel,
   bulkCreateArtikel,
   bulkCreateArtikel2,
+  multiDeleteArtikel,
 } = require('../controllers/artikelController');
 
 const routers = express.Router();
@@ -111,5 +112,6 @@ routers.delete('/user/delete/:id', deleteUser);
 
 // === artikel === //
 routers.delete('/artikel/delete/:id', deleteArtikel);
+routers.delete('/artikel/multiDelete', multiDeleteArtikel);
 
 module.exports = routers;

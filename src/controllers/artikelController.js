@@ -203,6 +203,47 @@ async function deleteArtikel(req, res) {
     });
   }
 }
+async function multiDeleteArtikel(req, res) {
+  try {
+    const { payload } = req.body;
+    let jumlah = payload.length;
+    let success = 0;
+    let fail = 0;
+    await Promise.all(
+      payload.map(async (items, index) => {
+        try {
+          const artikel = await ArtikelModel.findOne({
+            where: { id: items.id },
+          });
+          if (artikel.userID !== req.id) {
+            return res.json({
+              status: 'Fail',
+              msg: 'unauthorized',
+            });
+          }
+          await ArtikelModel.destroy({
+            where: { id: items.id },
+          });
+          success = success + 1;
+        } catch (error) {
+          console.log(error);
+          fail = fail + 1;
+        }
+      })
+    );
+    res.status(201).json({
+      status: 'Success',
+      msg: `sukses menghapus ${success} artikel dari ${jumlah} artikel dengan ${fail} gagal`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(403).json({
+      status: 'Fail',
+      msg: 'Something went wrong',
+      err: error,
+    });
+  }
+}
 
 module.exports = {
   createArtikel,
@@ -212,4 +253,5 @@ module.exports = {
   bulkCreateArtikel,
   deleteArtikel,
   bulkCreateArtikel2,
+  multiDeleteArtikel,
 };
