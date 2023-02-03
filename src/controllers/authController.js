@@ -182,15 +182,10 @@ async function resetPassword(req, res) {
     });
 
     if (currentToken === null) {
-      res.json({
+      res.status(403).json({
         msg: 'token invalid',
       });
     } else {
-      // const date = new Date();
-      // let date1 = dayjs(currentToken.expiredDate);
-      // let date2 = dayjs(date);
-      // let difference = date2.diff(date1, 'hour');
-
       let userExpired = currentToken.expiredDate;
       let expire = dayjs(Date());
       let difference = expire.diff(userExpired, 'hour');

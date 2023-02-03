@@ -45,6 +45,62 @@ async function createArtikel(req, res) {
   }
 }
 
+async function bulkCreateArtikel(req, res) {
+  try {
+    let { payload } = req.body;
+    payload.map((item, index) => {
+      item.userID = req.id;
+    });
+
+    await ArtikelModel.bulkCreate(payload);
+
+    res.status(201).json({
+      status: '201',
+      msg: 'Multi Artikel created successfully',
+    });
+  } catch (err) {
+    res.status(403).json({
+      status: 'error',
+      msg: 'error creating',
+    });
+  }
+}
+async function bulkCreateArtikel2(req, res) {
+  try {
+    let { payload } = req.body;
+    let success = 0;
+    let fail = 0;
+    let jumlah = payload.length;
+
+    await Promise.all(
+      payload.map(async (item, index) => {
+        try {
+          await ArtikelModel.create({
+            title: item.title,
+            year: item.year,
+            description: item.description,
+            userID: req.id,
+          });
+
+          success = success + 1;
+        } catch (err) {
+          fail = fail + 1;
+        }
+      })
+    );
+
+    res.status(201).json({
+      status: '201',
+      msg: `sukses menambahkan ${success} artikel dari total ${jumlah} artikel dan gagal ${fail} artikel`,
+    });
+  } catch (err) {
+    res.status(403).json({
+      status: 'error',
+      msg: 'error creating',
+    });
+  }
+}
+
 async function getArtikelByUser(req, res) {
   let { userID } = req.params;
 
@@ -116,7 +172,7 @@ async function updateArtikel(req, res) {
 async function deleteArtikel(req, res) {
   let { id } = req.params;
   const artikel = await ArtikelModel.findByPk(id);
-  
+
   try {
     if (artikel === null) {
       return res.status(404).json({
@@ -153,5 +209,7 @@ module.exports = {
   getArtikel,
   getArtikelByUser,
   updateArtikel,
+  bulkCreateArtikel,
   deleteArtikel,
+  bulkCreateArtikel2,
 };

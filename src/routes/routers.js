@@ -35,6 +35,8 @@ const {
   getArtikelByUser,
   updateArtikel,
   deleteArtikel,
+  bulkCreateArtikel,
+  bulkCreateArtikel2,
 } = require('../controllers/artikelController');
 
 const routers = express.Router();
@@ -82,6 +84,8 @@ routers.post(
 
 // === artikel === //
 routers.post('/artikel/create', createArtikel);
+routers.post('/artikel/multipleCreate', bulkCreateArtikel);
+routers.post('/artikel/multipleCreate2', bulkCreateArtikel2);
 
 // ========================= UPDATE ======================== //
 // === Users === //
