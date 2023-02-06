@@ -1,10 +1,30 @@
+const { Op } = require('sequelize');
+
 const ArtikelModel = require('../models').artikel;
 
 async function getArtikel(req, res) {
   try {
+    let { title, dari_tahun, sampai_tahun } = req.query;
+    // const artikel = await ArtikelModel.findAll({
+    //   where: {
+    //     userID: req.id,
+    //   },
+    // });
     const artikel = await ArtikelModel.findAll({
+      // attributes: ['id', ['title', 'judul'], 'description']
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
       where: {
-        userID: req.id,
+        userID: {
+          [Op.eq]: req.id,
+        },
+        title: {
+          [Op.substring]: title,
+        },
+        year: {
+          [Op.between]: [dari_tahun, sampai_tahun],
+        },
       },
     });
 
@@ -216,10 +236,7 @@ async function multiDeleteArtikel(req, res) {
             where: { id: items.id },
           });
           if (artikel.userID !== req.id) {
-            return res.json({
-              status: 'Fail',
-              msg: 'unauthorized',
-            });
+            return (fail = fail + 1);
           }
           await ArtikelModel.destroy({
             where: { id: items.id },
@@ -231,7 +248,7 @@ async function multiDeleteArtikel(req, res) {
         }
       })
     );
-    res.status(201).json({
+    res.status(200).json({
       status: 'Success',
       msg: `sukses menghapus ${success} artikel dari ${jumlah} artikel dengan ${fail} gagal`,
     });
