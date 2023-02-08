@@ -10,6 +10,7 @@ const log = require('./src/middleware/log');
 const notFound = require('./src/middleware/404');
 const errorHandling = require('./src/middleware/errorHandling');
 const auth = require('./src/middleware/auth');
+const paginationMiddleware = require('./src/middleware/pageSizeMiddleware');
 
 const app = express();
 const port = process.env.PORT || 8081;
@@ -18,6 +19,7 @@ const port = process.env.PORT || 8081;
 app.use(express.json());
 app.use(log);
 app.use(express.static('./src/storage/uploads'));
+app.use(paginationMiddleware);
 // app.use(auth);
 app.use(routers);
 app.use(notFound);
@@ -38,5 +40,4 @@ app.listen(port, async () => {
   }
 });
 
-
-// npx sequelize model:create --name produk  --attributes namaProduk:string,deskripsiProduk:string,hargaProduk:int,stokProduk:int,ratingProduk:string       
+// npx sequelize model:create --name produk  --attributes namaProduk:string,deskripsiProduk:string,hargaProduk:int,stokProduk:int,ratingProduk:string

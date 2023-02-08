@@ -2,38 +2,109 @@ const { Op } = require('sequelize');
 
 const ArtikelModel = require('../models').artikel;
 
+// async function getArtikel(req, res) {
+//   try {
+//     let { title, dari_tahun, sampai_tahun } = req.query;
+//     // const artikel = await ArtikelModel.findAll({
+//     //   where: {
+//     //     userID: req.id,
+//     //   },
+//     // });
+//     const artikel = await ArtikelModel.findAll({
+//       // attributes: ['id', ['title', 'judul'], 'description'] --As
+//       attributes: {
+//         exclude: ['createdAt', 'updatedAt'],
+//       },
+//       where: {
+//         userID: {
+//           [Op.eq]: req.id,
+//         },
+//         title: {
+//           [Op.substring]: title,
+//         },
+//         year: {
+//           [Op.between]: [dari_tahun, sampai_tahun],
+//         },
+//       },
+//     });
+
+//     res.json({
+//       status: 200,
+//       msg: 'Artikel was successfully',
+//       data: artikel,
+//     });
+//   } catch (err) {
+//     res.status(403).json({
+//       status: '404 Not Found',
+//       msg: 'Ada Kesalahan',
+//     });
+//   }
+// }
 async function getArtikel(req, res) {
   try {
-    let { title, dari_tahun, sampai_tahun } = req.query;
+    let {
+      title,
+      dari_tahun,
+      sampai_tahun,
+      keyword,
+      year,
+      page,
+      pageSize,
+      offset,
+      sortBy = 'id',
+      orderBy = 'ASC',
+    } = req.query;
     // const artikel = await ArtikelModel.findAll({
     //   where: {
     //     userID: req.id,
     //   },
     // });
-    const artikel = await ArtikelModel.findAll({
-      // attributes: ['id', ['title', 'judul'], 'description']
+    const artikel = await ArtikelModel.findAndCountAll({
+      // attributes: ['id', ['title', 'judul'], 'description'] --As
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
-      where: {
-        userID: {
-          [Op.eq]: req.id,
-        },
-        title: {
-          [Op.substring]: title,
-        },
-        year: {
-          [Op.between]: [dari_tahun, sampai_tahun],
-        },
-      },
+      // where: {
+      //   [Op.or]: [
+      //     {
+      //       title: {
+      //         [Op.substring]: keyword,
+      //       },
+      //     },
+      //     {
+      //       year: {
+      //         [Op.substring]: keyword,
+      //       },
+      //     },
+      //     {
+      //       description: {
+      //         [Op.substring]: keyword,
+      //       },
+      //     },
+      //   ],
+      //   year: {
+      //     [Op.gte]: year
+      //   }
+      // },
+
+      limit: pageSize,
+      offset: offset,
+      order: [[sortBy, orderBy]],
     });
 
     res.json({
       status: 200,
       msg: 'Artikel was successfully',
-      data: artikel,
+      pagination: {
+        currentPage: page,
+        pageSize: pageSize,
+        totalData: artikel.count,
+        // totalPage: artikel.count / page,
+      },
+      data: artikel.rows,
     });
   } catch (err) {
+    console.log(err);
     res.status(403).json({
       status: '404 Not Found',
       msg: 'Ada Kesalahan',
