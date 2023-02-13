@@ -7,7 +7,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       nama: {
         type: Sequelize.STRING,
@@ -18,27 +18,26 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
+      role: {
+        type: Sequelize.ENUM,
+        allowNull: false,
+        values: ['Guru', 'Siswa']
       },
-      tempatLahir: {
-        type: Sequelize.STRING
-      },
-      tanggalLahir: {
-        type: Sequelize.DATEONLY
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('users');
-  }
+  },
 };

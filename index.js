@@ -1,7 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-// const fs = require('fs-extra')
-const multer = require('multer');
 const dotenv = require('dotenv').config();
 const { sequelize } = require('./src/models');
 
@@ -15,10 +12,8 @@ const paginationMiddleware = require('./src/middleware/pageSizeMiddleware');
 const app = express();
 const port = process.env.PORT || 8081;
 
-// app.use(bodyParser.json());
 app.use(express.json());
 app.use(log);
-app.use(express.static('./src/storage/uploads'));
 app.use(paginationMiddleware);
 // app.use(auth);
 app.use(routers);
@@ -26,9 +21,6 @@ app.use(notFound);
 app.use(errorHandling);
 app.use(notFound);
 
-// app.listen(port, () =>
-//   console.log(`Server berjalan di http://localhost:${port}`)
-// );
 
 app.listen(port, async () => {
   try {
