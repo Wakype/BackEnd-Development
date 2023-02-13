@@ -147,7 +147,6 @@ async function bulkCreateMateri(req, res) {
 
       res.status(201).json({
         status: '201',
-
         msg: `sukses menambahkan ${success} Materi dari total ${jumlah} Materi dan gagal ${fail} Materi`,
       });
     } else {
