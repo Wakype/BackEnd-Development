@@ -1,8 +1,64 @@
 const bcrypt = require('bcrypt');
 
 const artikel = require('../models/artikel');
+const { Op } = require('sequelize');
 
 const UserModel = require('../models').user;
+
+const index = async (req, res) => {
+  try {
+    let { keyword, page, pageSize, orderBy, sortBy, pageActive } = req.query;
+
+    const users = await UserModel.findAndCountAll({
+      attributes: ['id', 'nama', 'email', 'status', 'jenisKelamin'],
+      where: {
+        ...(keyword !== undefined && {
+          [Op.or]: [
+            {
+              nama: {
+                [Op.like]: `%${keyword}%`,
+              },
+            },
+            {
+              email: {
+                [Op.like]: `%${keyword}%`,
+              },
+            },
+            {
+              jenisKelamin: {
+                [Op.like]: `%${keyword}%`,
+              },
+            },
+          ],
+        }),
+      },
+      order: [[sortBy, orderBy]],
+      offset: page,
+      limit: pageSize,
+    });
+    console.log('page', page);
+    console.log('pageSize', pageSize);
+
+    return res.json({
+      status: 'success',
+      msg: 'user successfully',
+      pagination: {
+        page: pageActive,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        pageSize: pageSize,
+        jumlah: users.rows.length,
+        total: users.count,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(403).json({
+      status: 'error',
+      msg: 'ada kesalahan',
+    });
+  }
+};
 
 async function getListUser(req, res) {
   try {
