@@ -39,6 +39,7 @@ const {
   bulkCreateArtikel2,
   multiDeleteArtikel,
 } = require('../controllers/artikelController');
+const { getListNilai } = require('../controllers/nilaiController');
 
 const routers = express.Router();
 
@@ -56,6 +57,9 @@ routers.use(jwtValidateMiddleware);
 routers.get('/user/list', getListUser);
 routers.get('/user/detail/:id', getDetailUserById);
 routers.get('/user/list/:email', getDetailUserByParams);
+
+// === nilai === //
+routers.get('/nilai/list', getListNilai);
 
 // === Products === //
 routers.get('/produk', getListProduk);

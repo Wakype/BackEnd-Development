@@ -4,6 +4,8 @@ const artikel = require('../models/artikel');
 const { Op } = require('sequelize');
 
 const UserModel = require('../models').user;
+const models = require('../models');
+const { checkQuery } = require('../utils');
 
 const index = async (req, res) => {
   try {
@@ -32,6 +34,14 @@ const index = async (req, res) => {
           ],
         }),
       },
+      include: [
+        {
+          model: models.identitas,
+          require: true,
+          as: 'identitas',
+          attributes: ['id', 'nama', 'alamat', 'tempatLahir', 'tanggalLahir'],
+        },
+      ],
       order: [[sortBy, orderBy]],
       offset: page,
       limit: pageSize,
@@ -62,13 +72,38 @@ const index = async (req, res) => {
 
 async function getListUser(req, res) {
   try {
-    const users = await UserModel.findAll();
+    let { mapel } = req.query;
+    const users = await UserModel.findAll({
+      attributes: ['id', 'nama', 'email', 'jenisKelamin'],
+      include: [
+        {
+          model: models.identitas,
+          require: true,
+          as: 'identitas',
+          attributes: ['id', 'nama', 'alamat', 'tempatLahir', 'tanggalLahir'],
+        },
+        {
+          model: models.nilai,
+          require: true,
+          as: 'nilai',
+          attributes: ['nilai', 'mapel'],
+          where: {
+            ...(checkQuery(mapel) && {
+              mapel: {
+                [Op.substring]: mapel,
+              },
+            }),
+          },
+        },
+      ],
+    });
     res.json({
       status: 200,
       msg: 'Data berhasil ditemukan',
       data: users,
     });
   } catch (err) {
+    console.log(err);
     res.status(403).json({
       status: '404 Not Found',
       msg: 'Ada Kesalahan',
@@ -79,7 +114,20 @@ async function getListUser(req, res) {
 async function getDetailUserById(req, res) {
   let { id } = req.params;
 
-  const user = await UserModel.findByPk(id);
+  const user = await UserModel.findOne({
+    where: {
+      id: id,
+    },
+    attributes: ['id', 'nama', 'email', 'jenisKelamin'],
+    include: [
+      {
+        model: models.identitas,
+        require: true,
+        as: 'identitas',
+        attributes: ['id', 'nama', 'alamat', 'tempatLahir', 'tanggalLahir'],
+      },
+    ],
+  });
 
   if (user === null) {
     res.status(404).json({

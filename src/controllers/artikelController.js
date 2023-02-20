@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 
 const ArtikelModel = require('../models').artikel;
+const { checkQuery } = require('../utils');
 
 // async function getArtikel(req, res) {
 //   try {
@@ -53,6 +54,7 @@ async function getArtikel(req, res) {
       offset,
       sortBy = 'id',
       orderBy = 'ASC',
+      isAll,
     } = req.query;
     // const artikel = await ArtikelModel.findAll({
     //   where: {
@@ -64,28 +66,37 @@ async function getArtikel(req, res) {
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
-      // where: {
-      //   [Op.or]: [
-      //     {
-      //       title: {
-      //         [Op.substring]: keyword,
-      //       },
-      //     },
-      //     {
-      //       year: {
-      //         [Op.substring]: keyword,
-      //       },
-      //     },
-      //     {
-      //       description: {
-      //         [Op.substring]: keyword,
-      //       },
-      //     },
-      //   ],
-      //   year: {
-      //     [Op.gte]: year
-      //   }
-      // },
+      where: {
+        ...(checkQuery(isAll) &&
+          isAll != 1 && {
+            userID: req.id,
+          }),
+
+        ...(checkQuery(keyword) && {
+          [Op.or]: [
+            {
+              year: {
+                [Op.substring]: keyword,
+              },
+            },
+            {
+              title: {
+                [Op.substring]: keyword,
+              },
+            },
+            {
+              description: {
+                [Op.substring]: keyword,
+              },
+            },
+          ],
+        }),
+        ...(checkQuery(year) && {
+          year: {
+            [Op.gte]: year,
+          },
+        }),
+      },
 
       limit: pageSize,
       offset: offset,
