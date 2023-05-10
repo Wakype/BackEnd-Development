@@ -5,7 +5,6 @@ const multer = require('multer');
 const http = require('http');
 const cors = require('cors');
 
-
 const { sequelize } = require('./src/models');
 const { Server } = require('socket.io');
 
@@ -20,7 +19,7 @@ const port = process.env.PORT || 8081;
 
 app.use(express.json());
 app.use(log);
-app.use(cors())
+app.use(cors());
 app.use(express.static('./src/storage/uploads'));
 app.use(paginationMiddleware);
 app.use(routers);
@@ -44,13 +43,13 @@ io.on('connection', (socket) => {
     console.log('kode room: ', data);
   });
   socket.on('send_message', (data) => {
-    console.log('send_message data', data)
-    socket.to(data.room).emit("received_message", data)
-  })
+    console.log('send_message data', data);
+    socket.to(data.room).emit('received_message', data);
+  });
   socket.on('broadcast', (data) => {
-    console.log('pesan broadcast =>', data)
-    socket.broadcast.emit('broadcast_received', data)
-  })
+    console.log('pesan broadcast =>', data);
+    socket.broadcast.emit('broadcast_received', data);
+  });
   socket.on('disconnect', () => {
     console.log('user disconnected', socket.id);
   });
