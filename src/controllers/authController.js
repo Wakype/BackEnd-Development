@@ -28,6 +28,7 @@ async function loginAuth(req, res) {
 
     login({ username, password, req, res });
   } catch (err) {
+    console.log(err);
     res.status(403).json({
       status: 'Fail',
       msg: err.message,
@@ -39,7 +40,7 @@ async function authMe(req, res) {
   try {
     auth(req, res);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(403).json({
       status: 'Fail',
       msg: err.message,

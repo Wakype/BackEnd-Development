@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class user extends Model {
+  class conversation extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,30 +11,24 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      user.hasMany(models.chatRoom, {
-        as: 'chatUsername1',
-        foreignKey: 'username1'
-      }),
-      user.hasMany(models.chatRoom, {
-        as: 'chatUsername2',
-        foreignKey: 'username2'
-      }),
-      user.hasMany(models.conversation, {
+      conversation.belongsTo(models.user, {
         as: 'conversationSender',
         foreignKey: 'sender'
       }),
-      user.hasMany(models.conversation, {
+      conversation.belongsTo(models.user, {
         as: 'conversationTo',
         foreignKey: 'to'
       })
     }
   }
-  user.init({
-    username: DataTypes.STRING,
-    password: DataTypes.STRING
+  conversation.init({
+    sender: DataTypes.STRING,
+    to: DataTypes.STRING,
+    message: DataTypes.TEXT,
+    roomCode: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'user',
+    modelName: 'conversation',
   });
-  return user;
+  return conversation;
 };
