@@ -56,16 +56,6 @@ export class BookService extends BaseResponse {
     ]);
 
     return this._pagination('Buku ditemukan', result, total, page, pageSize);
-    // return {
-    //   status: 'Success',
-    //   message: 'List Buku ditemukan',
-    //   pagination: {
-    //     total,
-    //     page,
-    //     pageSize,
-    //   },
-    //   data: result,
-    // };
   }
 
   async createBook(payload: any) {
@@ -90,16 +80,11 @@ export class BookService extends BaseResponse {
 
       if (book === null) {
         throw new NotFoundException(`buku dengan ID: ${id}. Tidak ditemukan`);
-        // throw new HttpException(
-        //   `buku dengan ID: ${id}. Tidak ditemukan`,
-        //   HttpStatus.NOT_FOUND,
-        // );
       }
 
       return this._success('Detail buku ditemukan', book);
     } catch (err) {
       return err;
-      // throw new HttpException('ada kesalah', HttpStatus.BAD_REQUEST);
     }
   }
 

@@ -23,7 +23,6 @@ export class BookController {
   @Get('detail/:id')
   getBook(@Param('id') id: string) {
     return this.bookService.getDetailBook(+id);
-    return this.bookService.getDetailBook(Number(id));
   }
 
   @Post('create')
