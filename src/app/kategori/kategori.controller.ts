@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -30,7 +31,7 @@ export class KategoriController {
   }
 
   @Post('/create/bulk')
-  bulkCreateBook(@InjectCreatedBy() payload: createKategoriArrayDto) {
+  bulkCreateBook(@Body() payload: createKategoriArrayDto) {
     return this.kategoriService.bulkCreate(payload);
   }
 

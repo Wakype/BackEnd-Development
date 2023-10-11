@@ -41,30 +41,77 @@ export class KategoriService extends BaseResponse {
     }
   }
 
-  async bulkCreate(payload: createKategoriArrayDto): Promise<ResponseSuccess> {
-    try {
-      let berhasil = 0;
-      let gagal = 0;
-      await Promise.all(
-        payload.data.map(async (data) => {
-          try {
-            await this.kategoriRepository.save(data);
+  // async createBulk(payload: CreateKategoriDto[]): Promise<ResponseSuccess> {
+  //   console.log(payload);
+  //   try {
+  //     const kategoris = payload.map((kategoriDto) => ({
+  //       ...kategoriDto,
+  //       created_by: { id: this.req.user.id },
+  //     }));
 
-            berhasil += 1;
-          } catch {
-            gagal += 1;
+  //     await this.kategoriRepository.save(kategoris);
+
+  //     return this._success('Bulk create successful', payload);
+  //   } catch (error) {
+  //     throw new HttpException('Ada Kesalahan', HttpStatus.UNPROCESSABLE_ENTITY);
+  //   }
+  // }
+
+  async bulkCreate(payload: createKategoriArrayDto): Promise<ResponseSuccess> {
+    console.log(payload);
+
+    try {
+      const results = await Promise.all(
+        payload.data.map(async (kategoriDto) => {
+          try {
+            // Set the 'created_by' field
+            kategoriDto.created_by = { id: this.req.user.id };
+
+            await this.kategoriRepository.save(kategoriDto);
+            return 'success';
+          } catch (error) {
+            return 'failed';
           }
         }),
       );
+
+      const berhasil = results.filter((result) => result === 'success').length;
+      const gagal = results.filter((result) => result === 'failed').length;
 
       return this._success(
         `Berhasil menyimpan ${berhasil} dan gagal ${gagal}`,
         payload,
       );
-    } catch {
-      throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
+    } catch (error) {
+      throw new HttpException('Ada Kesalahan', HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+
+  // async bulkCreate(payload: createKategoriArrayDto): Promise<ResponseSuccess> {
+  //   try {
+  //     let berhasil = 0;
+  //     let gagal = 0;
+
+  //     await Promise.all(
+  //       payload.data.map(async (data) => {
+  //         try {
+  //           await this.kategoriRepository.save(data);
+
+  //           berhasil += 1;
+  //         } catch {
+  //           gagal += 1;
+  //         }
+  //       }),
+  //     );
+
+  //     return this._success(
+  //       `Berhasil menyimpan ${berhasil} dan gagal ${gagal}`,
+  //       payload,
+  //     );
+  //   } catch {
+  //     throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   async getAllCategory(query: findAllKategori): Promise<ResponsePagination> {
     const { page, pageSize, limit, nama_kategori } = query;
