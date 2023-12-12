@@ -7,10 +7,33 @@ import { BookModule } from './book/book.module';
 import { AuthModule } from './app/auth/auth.module';
 import { MailModule } from './app/mail/mail.module';
 import { KategoriModule } from './app/kategori/kategori.module';
+import { ProdukModule } from './app/produk/produk.module';
+import { UploadController } from './app/upload/upload.controller';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { KonsumenModule } from './app/konsumen/konsumen.module';
+import { UniqueValidator } from './utils/validator/unique.validator';
+import { ProfileModule } from './app/profile/profile.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), BookModule, AuthModule, MailModule, KategoriModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    // }),
+
+    TypeOrmModule.forRoot(typeOrmConfig),
+    BookModule,
+    AuthModule,
+    MailModule,
+    KategoriModule,
+    ProdukModule,
+    KonsumenModule,
+    ProfileModule,
+  ],
+  controllers: [AppController, UploadController],
+  providers: [AppService, UniqueValidator],
 })
 export class AppModule {}

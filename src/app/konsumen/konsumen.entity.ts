@@ -1,33 +1,37 @@
 import {
-  BaseEntity,
-  Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
+  BaseEntity,
   PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../auth/auth.entity';
-import { Produk } from '../produk/produk.entity';
 
 @Entity()
-export class Kategori extends BaseEntity {
+export class Konsumen extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ nullable: false })
-  nama_kategori: string;
+  nama_konsumen: string;
+
+  @Column({ type: 'text', nullable: false })
+  alamat_konsumen: string;
+
+  @Column({ unique: true, nullable: false })
+  email: string;
+
+  @Column({ nullable: false })
+  nomor_handphone: string;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'created_by' }) //buat relasi many to one  dengan table user
+  @JoinColumn({ name: 'created_by' })
   created_by: User;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'updated_by' }) //buat relasi many to one  dengan table user
+  @JoinColumn({ name: 'updated_by' })
   updated_by: User;
-
-  @OneToMany(() => Produk, (v) => v.kategori)
-  produk: Produk[];
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

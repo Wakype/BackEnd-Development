@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -15,6 +19,7 @@ async function bootstrap() {
       },
     }),
   );
-  await app.listen(3000);
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  await app.listen(5002);
 }
 bootstrap();
